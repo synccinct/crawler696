@@ -1,37 +1,64 @@
-version: "3.9"
+# docker-compose.yml
+version: '3.8'
 
 services:
-  api:
+  app:
     build: .
-    ports: ["8080:8080"]
-    env_file: .env
-    depends_on: [postgres, redis]
-
-  scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: ["/app/crawler", "scheduler"]
-    depends_on: [postgres, redis]
-
-  frontend:
-    build: ./frontend
-    ports: ["3000:3000"]
+    ports:
+      - "8080:8080"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - CONFIG_PATH=/app/config/config.yaml
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+    volumes:
+      - ./config:/app/config
+    restart: unless-stopped
 
   postgres:
-    image: postgres:16
+    image: postgres:15-alpine
     environment:
       POSTGRES_DB: crawler666
       POSTGRES_USER: crawler
-      POSTGRES_PASSWORD: crawlerpass
-    volumes: ["dbdata:/var/lib/postgresql/data"]
+      POSTGRES_PASSWORD: crawler666
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongodb:
+    image: mongo:7-jammy
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: crawler666
 
   redis:
-    image: redis:7
-    command: ["redis-server", "--appendonly", "yes"]
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: crawler
+      RABBITMQ_DEFAULT_PASS: crawler666
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
 volumes:
-  dbdata:
-  
+  postgres_data:
+  mongodb_data:
+  redis_data:
+  rabbitmq_data:
