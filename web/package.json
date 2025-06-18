@@ -1,0 +1,29 @@
+// web/package.json
+{
+  "name": "crawler666-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export"
+  },
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@mui/material": "^5.14.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "axios": "^1.5.0",
+    "recharts": "^2.8.0",
+    "socket.io-client": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.8.0",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0",
+    "typescript": "5.2.0"
+  }
+}
