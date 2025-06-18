@@ -1,0 +1,13 @@
+crawler:
+  mode: distributed
+  workers: 1000
+  rate_limit: 1000
+
+stealth:
+  enabled: true
+  proxy_rotation: true
+  fingerprint_randomization: true
+
+storage:
+  postgres_url: ${POSTGRES_URL}
+  redis_url: ${REDIS_URL}
